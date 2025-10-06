@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chemical formula enhancer</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+    }
+    textarea {
+      width: 100%;
+      min-height: 50px;
+      margin-bottom: 10px;
+    }
+    button {
+      margin: 10px 0;
+      padding: 8px;
+    }
+    .output-box {
+      border: 1px solid #ccc;
+      padding: 10px;
+      min-height: 50px;
+      background: #fafafa;
+    }
+  </style>
+</head>
+<body>
+  <h1>Chemical formula enhancer</h1>
+
+  <textarea id="inputText" placeholder="Type here..."></textarea>
+
+  <h2>Output (HTML):</h2>
+  <textarea id="outputText" readonly></textarea>
+  <button onclick="copyOutput()">Copy Output</button>
+
+  <h2>Output (Markdown):</h2>
+  <textarea id="outputTextMD" readonly></textarea>
+  <button onclick="copyOutputMD()">Copy Output</button>
+
+  <h2>Output (Render):</h2>
+  <div id="htmlOutput" class="output-box"></div>
+
+  <script>
+    const sup_regex = /([A-Za-z]|\)|\])([0-9]?)(\^?)([+-]|[1-9][0-9]*[+-])/gm;
+    const sup_replacement = "$1$2<sup>$4</sup>";
+    const sub_regex = /([A-Za-z]|\)|\])([1-9][0-9]*)/gm;
+    const sub_replacement = "$1<sub>$2</sub>";
+    const arrow_regex = /-+>/gm;
+    const arrow_replacement = "→";
+
+    const to_markdown_regex = /(<)(\/?su[bp])(>)/gm;
+    const to_markdown_replacement = "[$2]";
+
+    const inputField = document.getElementById("inputText");
+    const outputField = document.getElementById("outputText");
+    const outputFieldMD = document.getElementById("outputTextMD");
+    const htmlOutput = document.getElementById("htmlOutput");
+
+    function updateOutput() {
+      const input = inputField.value;
+      const output = input.replace(sup_regex, sup_replacement).replace(sub_regex, sub_replacement).replace(arrow_regex, arrow_replacement);
+      outputField.value = output; 
+      const output_md = output.replace(to_markdown_regex, to_markdown_replacement);
+      outputFieldMD.value = output_md;  
+      htmlOutput.innerHTML = output;  
+    }
+
+    inputField.addEventListener("input", updateOutput);
+
+    function copyOutput() {
+      outputField.select();
+      document.execCommand("copy");
+    }
+
+    function copyOutputMD() {
+      outputFieldMD.select();
+      document.execCommand("copy");
+    }
+  </script>
+</body>
+</html>
